@@ -17,3 +17,4 @@ CREATE TABLE Products (Product_ID int primary key, Product_Name nvarchar(200),
                        FOREIGN KEY(Brand_ID) REFERENCES Brand(Brand_ID),
                        FOREIGN KEY(Product_Type_ID) REFERENCES Product_Type(Product_Type_ID),
                        FOREIGN KEY(Key_Ingredients_ID) REFERENCES Key_Ingredients(Key_Ingredients_ID));
+select * from Products;

@@ -1,2 +1,2 @@
 USE Skinalyze;
-DROP DATABASE Skinalyze;
+DROgiP DATABASE Skinalyze;

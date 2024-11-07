@@ -38,7 +38,7 @@
         </div>
 
         <p class="mt-4 text-center text-white">
-            position your face in the oval
+            Position your face in the oval
         </p>
 
         <button id="captureButton" class="mt-8 h-16 w-16 rounded-full border-2 border-white bg-transparent p-0 hover:bg-white/10">
@@ -56,20 +56,39 @@
     const captureButton = document.getElementById('captureButton');
     const backButton = document.getElementById('backButton');
 
+    // Access camera
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
         .then(stream => {
             video.srcObject = stream;
         })
         .catch(err => console.error("Error accessing camera:", err));
 
-    captureButton.addEventListener('click', () => {
+    // Capture image and send to backend
+    captureButton.addEventListener('click', async () => {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         canvas.getContext('2d').drawImage(video, 0, 0);
 
-        // Here you would typically send the image data to your server or process it
-        // For this example, we'll just redirect to the next page
-        window.location.href = 'type.html';
+        // Convert image to data URL
+        const imageDataUrl = canvas.toDataURL('image/jpeg');
+
+        // Send image to backend for analysis
+        try {
+            const response = await fetch('YOUR_BACKEND_API_URL', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: imageDataUrl })
+            });
+
+            const result = await response.json();
+            const { concern } = result; // Expecting backend to return an object with the concern
+
+            // Redirect to type.html with analyzed concern as a query parameter
+            window.location.href = `type.html?concern=${encodeURIComponent(concern)}`;
+        } catch (error) {
+            console.error('Error analyzing image:', error);
+            alert('Failed to analyze the image.');
+        }
     });
 
     backButton.addEventListener('click', () => {

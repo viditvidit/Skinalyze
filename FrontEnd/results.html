@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Care App - Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white">
+<div class="min-h-screen p-4">
+    <div class="mb-6 flex items-center gap-4">
+        <button id="backButton" class="bg-transparent hover:bg-gray-100 p-2 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m12 19-7-7 7-7"/>
+                <path d="M19 12H5"/>
+            </svg>
+        </button>
+        <h1 class="text-xl font-semibold">Results</h1>
+    </div>
+
+    <div id="loading" class="flex items-center justify-center py-12">
+        <div class="text-center text-gray-500">Loading products...</div>
+    </div>
+
+    <div id="productGrid" class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"></div>
+
+    <div id="noResults" class="hidden flex items-center justify-center py-12">
+        <div class="text-center text-gray-500">
+            No products found for your skin type and concern.
+        </div>
+    </div>
+</div>
+
+<script>
+    const loading = document.getElementById('loading');
+    const productGrid = document.getElementById('productGrid');
+    const noResults = document.getElementById('noResults');
+    const backButton = document.getElementById('backButton');
+
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    const concern = getQueryParam('concern');
+    const skinType = getQueryParam('type');
+
+    async function fetchProducts() {
+        loading.style.display = 'flex';
+        try {
+            // Replace 'YOUR_API_URL' with the actual endpoint to fetch products based on skin type and concern
+            const response = await fetch(`YOUR_API_URL?concern=${concern}&type=${skinType}`);
+            const products = await response.json();
+
+            const filteredProducts = products.slice(0, 30); // Limit to 30 products
+
+            loading.style.display = 'none';
+
+            if (filteredProducts.length === 0) {
+                noResults.style.display = 'flex';
+            } else {
+                filteredProducts.forEach(product => {
+                    const productElement = document.createElement('div');
+                    productElement.className = 'flex flex-col items-center rounded-lg bg-gray-50 p-4 transition-transform hover:scale-105 cursor-pointer';
+                    productElement.onclick = () => window.open(product.productLink, '_blank');
+                    productElement.innerHTML = `
+                            <div class="relative mb-2 h-32 w-32 overflow-hidden rounded-lg">
+                                <img src="${product.image}" alt="${product.name}" class="h-full w-full object-cover">
+                            </div>
+                            <span class="mb-2 text-center text-sm font-medium">${product.name}</span>
+                        `;
+                    productGrid.appendChild(productElement);
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            loading.innerHTML = 'Failed to load products.';
+        }
+    }
+
+    backButton.addEventListener('click', () => {
+        window.location.href = 'type.html';
+    });
+
+    // Call fetchProducts on page load
+    fetchProducts();
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Care App - Scan</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .camera-frame {
+            width: 300px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        .oval-mask {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 260px;
+            height: 360px;
+            transform: translate(-50%, -50%);
+            border-radius: 130px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-gray-900">
+<div class="relative min-h-screen p-4">
+    <button id="backButton" class="absolute left-4 top-4 text-white bg-transparent hover:bg-white/10 p-2 rounded-full">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+    </button>
+
+    <div class="flex min-h-screen flex-col items-center justify-center">
+        <div class="camera-frame mb-8">
+            <div class="oval-mask bg-white">
+                <video id="video" autoplay playsinline muted class="w-full h-full object-cover"></video>
+            </div>
+        </div>
+
+        <p class="mt-4 text-center text-white">
+            Position your face in the oval
+        </p>
+
+        <button id="captureButton" class="mt-8 h-16 w-16 rounded-full border-2 border-white bg-transparent p-0 hover:bg-white/10">
+            <span class="sr-only">Capture photo</span>
+            <div class="h-12 w-12 rounded-full bg-white mx-auto"></div>
+        </button>
+    </div>
+
+    <canvas id="canvas" class="hidden"></canvas>
+</div>
+
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureButton = document.getElementById('captureButton');
+    const backButton = document.getElementById('backButton');
+
+    // Access camera
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+        .then(stream => {
+            video.srcObject = stream;
+        })
+        .catch(err => console.error("Error accessing camera:", err));
+
+    // Capture image and send to backend
+    captureButton.addEventListener('click', async () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+
+        // Convert image to data URL
+        const imageDataUrl = canvas.toDataURL('image/jpeg');
+
+        // Send image to backend for analysis
+        try {
+            const response = await fetch('YOUR_BACKEND_API_URL', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: imageDataUrl })
+            });
+
+            const result = await response.json();
+            const { concern } = result; // Expecting backend to return an object with the concern
+
+            // Redirect to type.html with analyzed concern as a query parameter
+            window.location.href = `type.html?concern=${encodeURIComponent(concern)}`;
+        } catch (error) {
+            console.error('Error analyzing image:', error);
+            alert('Failed to analyze the image.');
+        }
+    });
+
+    backButton.addEventListener('click', () => {
+        window.location.href = 'index.html';
+    });
+</script>
+</body>
+</html>

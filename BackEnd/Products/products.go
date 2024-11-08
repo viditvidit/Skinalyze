@@ -44,6 +44,32 @@ func GetProducts(c *gin.Context, db *sql.DB) {
 	c.JSON(http.StatusOK, products)
 }
 
+func GetProductsByConcern(c *gin.Context, db *sql.DB, concernID int) {
+	rows, err := db.Query(`
+    SELECT Product_ID, Product_Name, All_Ingredients, Concern_ID, Skin_Type_ID,
+    Brand_ID, Product_Type_ID, Key_Ingredients_ID
+    FROM PRODUCTS
+    WHERE Concern_ID = ?
+    `, concernID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	var products []Product
+	for rows.Next() {
+		var product Product
+		if err := rows.Scan(&product.ProductID, &product.ProductName, &product.AllIngredients, &product.ConcernID,
+			&product.SkinTypeID, &product.BrandID, &product.ProductTypeID, &product.KeyIngredientsID); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		products = append(products, product)
+	}
+	c.JSON(http.StatusOK, products)
+}
+
 // Create a new product
 func CreateProduct(c *gin.Context, db *sql.DB) {
 	// Read the query parameters

@@ -14,6 +14,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"log"
+	"net/http"
+	"strconv"
 )
 
 // struct definition
@@ -128,6 +130,15 @@ func main() {
 	// Products CRUD routes
 	router.GET("/products", func(c *gin.Context) {
 		products.GetProducts(c, db)
+	})
+	router.GET("/products/byconcern/:concern_id", func(c *gin.Context) {
+		concernIDStr := c.Param("concern_id")
+		concernID, err := strconv.Atoi(concernIDStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid concern_id"})
+			return
+		}
+		products.GetProductsByConcern(c, db, concernID)
 	})
 	router.POST("/products/create", func(c *gin.Context) {
 		products.CreateProduct(c, db)

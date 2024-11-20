@@ -83,7 +83,7 @@ def get_recommended_products(detected_conditions, skin_type_id):
         return "No products for given condition and skin type."
 
 def get_recommended_products_by_type(detected_conditions, skin_type_id, product_type_id):
-    API_BASE_URL = "http://localhost:8080"
+    API_BASE_URL = "https://<random-subdomain>.ngrok.io/products"
     PRODUCTS_BY_CONCERN_ENDPOINT = "/products/selectspec"
     recommended_products = []
 

@@ -131,15 +131,53 @@ func main() {
 	router.GET("/products", func(c *gin.Context) {
 		products.GetProducts(c, db)
 	})
-	router.GET("/products/byconcern/:concern_id", func(c *gin.Context) {
+
+	router.GET("/products/select/:concern_id/:skin_type_id", func(c *gin.Context) {
+		// Get concern ID
 		concernIDStr := c.Param("concern_id")
 		concernID, err := strconv.Atoi(concernIDStr)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid concern_id"})
 			return
 		}
-		products.GetProductsByConcern(c, db, concernID)
+		// Get skin type ID
+		skinTypeIDStr := c.Param("skin_type_id")
+		skinTypeID, err := strconv.Atoi(skinTypeIDStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid skin_type_id"})
+			return
+		}
+		products.GetSelectProducts(c, db, concernID, skinTypeID)
 	})
+
+	router.GET("/products/selectspec/:concern_id/:skin_type_id/:product_type_id", func(c *gin.Context) {
+		// Get concern ID
+		concernIDStr := c.Param("concern_id")
+		concernID, err := strconv.Atoi(concernIDStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid concern_id"})
+			return
+		}
+
+		// Get skin type ID
+		skinTypeIDStr := c.Param("skin_type_id")
+		skinTypeID, err := strconv.Atoi(skinTypeIDStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid skin_type_id"})
+			return
+		}
+
+		// Get product type ID
+		productTypeIDStr := c.Param("product_type_id")
+		productTypeID, err := strconv.Atoi(productTypeIDStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid product_type_id"})
+			return
+		}
+
+		products.GetSelectProductsByType(c, db, concernID, skinTypeID, productTypeID)
+	})
+
 	router.POST("/products/create", func(c *gin.Context) {
 		products.CreateProduct(c, db)
 	})

@@ -12,10 +12,14 @@ type Product struct {
 	ProductName      string `json:"product_name"`
 	AllIngredients   string `json:"all_ingredients"`
 	ConcernID        int    `json:"concern_id"`
+	Concern          string `json:"concern"`
 	SkinTypeID       int    `json:"skin_type_id"`
+	SkinType         string `json:"skin_type"`
 	BrandID          int    `json:"brand_id"`
+	Brand            string `json:"brand"`
 	ProductTypeID    int    `json:"product_type_id"`
 	KeyIngredientsID int    `json:"key_ingredients_id"`
+	KeyIngredients   string `json:"key_ingredients"`
 }
 
 // Get all products
@@ -44,13 +48,26 @@ func GetProducts(c *gin.Context, db *sql.DB) {
 	c.JSON(http.StatusOK, products)
 }
 
-func GetProductsByConcern(c *gin.Context, db *sql.DB, concernID int) {
+// Get Select Products
+func GetSelectProducts(c *gin.Context, db *sql.DB, concernID, skinTypeID int) {
 	rows, err := db.Query(`
-    SELECT Product_ID, Product_Name, All_Ingredients, Concern_ID, Skin_Type_ID,
-    Brand_ID, Product_Type_ID, Key_Ingredients_ID
-    FROM PRODUCTS
-    WHERE Concern_ID = ?
-    `, concernID)
+    SELECT 
+        p.Product_Name,
+        p.All_Ingredients,
+        b.Brand,
+        c.Concern,
+        k.Key_Ingredients,
+        s.Skin_Type
+    FROM PRODUCTS p
+    INNER JOIN brand b ON p.Brand_ID = b.Brand_ID
+    INNER JOIN concern c ON p.Concern_ID = c.Concern_ID
+    INNER JOIN key_ingredients k ON p.Key_Ingredients_ID = k.Key_Ingredients_ID
+    INNER JOIN skin_type s ON p.Skin_Type_ID = s.Skin_Type_ID
+    WHERE p.Concern_ID = ? 
+    AND p.Skin_Type_ID = ?
+    ORDER BY p.PRODUCT_TYPE_ID
+    `, concernID, skinTypeID)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -60,8 +77,59 @@ func GetProductsByConcern(c *gin.Context, db *sql.DB, concernID int) {
 	var products []Product
 	for rows.Next() {
 		var product Product
-		if err := rows.Scan(&product.ProductID, &product.ProductName, &product.AllIngredients, &product.ConcernID,
-			&product.SkinTypeID, &product.BrandID, &product.ProductTypeID, &product.KeyIngredientsID); err != nil {
+		if err := rows.Scan(
+			&product.ProductName,
+			&product.AllIngredients,
+			&product.Brand,
+			&product.Concern,
+			&product.KeyIngredients,
+			&product.SkinType,
+		); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		products = append(products, product)
+	}
+	c.JSON(http.StatusOK, products)
+}
+
+// Get Select Products of specific type
+func GetSelectProductsByType(c *gin.Context, db *sql.DB, concernID, skinTypeID, productTypeID int) {
+	rows, err := db.Query(`
+    SELECT 
+        p.Product_Name,
+        p.All_Ingredients,
+        b.Brand,
+        c.Concern,
+        k.Key_Ingredients,
+        s.Skin_Type
+    FROM PRODUCTS p
+    INNER JOIN brand b ON p.Brand_ID = b.Brand_ID
+    INNER JOIN concern c ON p.Concern_ID = c.Concern_ID
+    INNER JOIN key_ingredients k ON p.Key_Ingredients_ID = k.Key_Ingredients_ID
+    INNER JOIN skin_type s ON p.Skin_Type_ID = s.Skin_Type_ID
+    WHERE p.Concern_ID = ? 
+    AND p.Skin_Type_ID = ?
+    AND p.Product_Type_ID = ?
+    ORDER BY p.PRODUCT_TYPE_ID
+    `, concernID, skinTypeID, productTypeID)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+	var products []Product
+	for rows.Next() {
+		var product Product
+		if err := rows.Scan(
+			&product.ProductName,
+			&product.AllIngredients,
+			&product.Brand,
+			&product.Concern,
+			&product.KeyIngredients,
+			&product.SkinType,
+		); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}

@@ -1,5 +1,8 @@
 streamlit
+opencv-python
 numpy
 ultralytics
 requests
 flask
+git+https://github.com/viditvidit/Skinalyze.git@master#egg=Skinalyze&subdirectory=Model
+-e .

@@ -2,11 +2,28 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 import requests
+import os
 
-#models
-pigmentation_model = YOLO('pigmentation.pt')
-darkspot_model = YOLO('darkspot.pt')
-acne_model = YOLO('acne.pt')
+urls = {
+    "pigmentation": "https://raw.githubusercontent.com/viditvidit/Skinalyze/master/Model/pigmentation.pt",
+    "darkspot": "https://raw.githubusercontent.com/viditvidit/Skinalyze/master/Model/darkspot.pt",
+    "acne": "https://raw.githubusercontent.com/viditvidit/Skinalyze/master/Model/acne.pt",
+}
+
+# Download models
+for name, url in urls.items():
+    local_path = f"./{name}.pt"
+    if not os.path.exists(local_path):  # Download only if not already downloaded
+        print(f"Downloading {name}.pt...")
+        response = requests.get(url)
+        with open(local_path, "wb") as f:
+            f.write(response.content)
+        print(f"{name}.pt downloaded!")
+
+# Load YOLO models
+pigmentation_model = YOLO('./pigmentation.pt')
+darkspot_model = YOLO('./darkspot.pt')
+acne_model = YOLO('./acne.pt')
 
 def preprocess_image(file):
     img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)

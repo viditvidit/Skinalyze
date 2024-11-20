@@ -4,7 +4,3 @@ ultralytics
 numpy
 Pillow
 requests
-
-# Add these for OpenCV system dependencies
-libgl1-mesa-glx
-libglib2.0-0

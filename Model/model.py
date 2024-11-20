@@ -4,9 +4,9 @@ from ultralytics import YOLO
 import requests
 
 #models
-pigmentation_model = YOLO('./pigmentation.pt')
-darkspot_model = YOLO('./darkspot.pt')
-acne_model = YOLO('./acne.pt')
+pigmentation_model = YOLO('pigmentation.pt')
+darkspot_model = YOLO('darkspot.pt')
+acne_model = YOLO('acne.pt')
 
 def preprocess_image(file):
     img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)

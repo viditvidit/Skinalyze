@@ -10,6 +10,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
@@ -39,6 +40,8 @@ func loadConfig() (Config, error) {
 
 func main() {
 	r := gin.Default()
+	r.Use(cors.Default()) // Default CORS config allows all origins, methods, and headers
+
 	// CORS middleware
 	r.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")

@@ -2,28 +2,11 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 import requests
-import os
 
-# Use environment variable or fallback to relative path
-MODEL_DIR = os.environ.get('MODEL_DIR', 'models/')
-
-# Ensure model directory exists
-os.makedirs(MODEL_DIR, exist_ok=True)
-
-# Download models
-def download_model(model_name, url):
-    model_path = os.path.join(MODEL_DIR, model_name)
-    if not os.path.exists(model_path):
-        print(f"Downloading {model_name}...")
-        response = requests.get(url)
-        with open(model_path, 'wb') as f:
-            f.write(response.content)
-    return model_path
-
-# Replace hardcoded model paths with downloadable models
-pigmentation_model = YOLO(download_model('pigmentation.pt', 'https://github.com/viditvidit/Skinalyze/blob/master/Model/pigmentation.pt'))
-darkspot_model = YOLO(download_model('darkspot.pt', 'https://github.com/viditvidit/Skinalyze/blob/master/Model/darkspot.pt'))
-acne_model = YOLO(download_model('acne.pt', 'https://github.com/viditvidit/Skinalyze/blob/master/Model/acne.pt'))
+#models
+pigmentation_model = YOLO('./pigmentation.pt')
+darkspot_model = YOLO('./darkspot.pt')
+acne_model = YOLO('./acne.pt')
 
 def preprocess_image(file):
     img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)

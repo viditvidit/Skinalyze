@@ -53,7 +53,7 @@ def analyze_skin(file):
 
 
 def get_recommended_products(detected_conditions, skin_type_id):
-    API_BASE_URL = "http://localhost:8080"
+    API_BASE_URL = "https://<random-subdomain>.ngrok.io/products"
     PRODUCTS_BY_CONCERN_ENDPOINT = "/products/select"
     recommended_products = []
 

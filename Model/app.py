@@ -4,7 +4,7 @@ from PIL import Image
 
 
 def main():
-    st.logo("./Logow.png", size='large')
+    st.logo("https://github.com/viditvidit/Skinalyze/blob/master/Model/Logow.png", size='large')
     st.subheader("Select Image Source")
 
     # Create columns for buttons

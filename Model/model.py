@@ -53,7 +53,7 @@ def analyze_skin(file):
 
 
 def get_recommended_products(detected_conditions, skin_type_id):
-    API_BASE_URL = "https://star-actively-minnow.ngrok-free.app/products"
+    API_BASE_URL = "https://star-actively-minnow.ngrok-free.app.ngrok.io/products"
     PRODUCTS_BY_CONCERN_ENDPOINT = "/products/select"
     recommended_products = []
 
@@ -83,7 +83,7 @@ def get_recommended_products(detected_conditions, skin_type_id):
         return "No products for given condition and skin type."
 
 def get_recommended_products_by_type(detected_conditions, skin_type_id, product_type_id):
-    API_BASE_URL = "https://star-actively-minnow.ngrok-free.app/products"
+    API_BASE_URL = "https://star-actively-minnow.ngrok-free.app.ngrok.io/products"
     PRODUCTS_BY_CONCERN_ENDPOINT = "/products/selectspec"
     recommended_products = []
 

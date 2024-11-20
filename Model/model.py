@@ -10,7 +10,7 @@ MODEL_DIR = os.environ.get('MODEL_DIR', 'models/')
 # Ensure model directory exists
 os.makedirs(MODEL_DIR, exist_ok=True)
 
-# Download models if not exists
+# Download models
 def download_model(model_name, url):
     model_path = os.path.join(MODEL_DIR, model_name)
     if not os.path.exists(model_path):

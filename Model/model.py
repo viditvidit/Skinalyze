@@ -1,32 +1,9 @@
-import cv2
 import numpy as np
 from ultralytics import YOLO
 import requests
 import os
 import sys
-
-# Modify system path to ensure OpenCV can find libraries
-os.environ['OPENCV_IO_MAX_IMAGE_PIXELS'] = str(2 ** 30)
-
-# Attempt to handle OpenCV import issues
-try:
-    import cv2
-except ImportError:
-    print("OpenCV import failed. Trying alternative approach.")
-    import sys
-    import subprocess
-
-
-    def install(package):
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-
-
-    try:
-        install('opencv-python-headless')
-        import cv2
-    except Exception as e:
-        print(f"Could not import OpenCV: {e}")
-        sys.exit(1)
+from PIL import Image
 
 urls = {
     "pigmentation": "https://raw.githubusercontent.com/viditvidit/Skinalyze/master/Model/pigmentation.pt",
@@ -62,14 +39,11 @@ except Exception as e:
     sys.exit(1)
 
 
+
 def preprocess_image(file):
-    # Read image with more robust error handling
     try:
-        img_array = np.frombuffer(file.read(), np.uint8)
-        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
-        if img is None:
-            raise ValueError("Failed to decode image")
-        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = Image.open(file)
+        img_rgb = np.array(img)
         return img, img_rgb
     except Exception as e:
         print(f"Image preprocessing error: {e}")

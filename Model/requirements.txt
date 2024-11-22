@@ -4,4 +4,3 @@ ultralytics
 numpy
 Pillow
 requests
-libgl1-mesa-glx

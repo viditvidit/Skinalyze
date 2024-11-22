@@ -1,6 +1,6 @@
 streamlit
+opencv-python-headless
 ultralytics
 numpy
 Pillow
-requests
-opencv-python-headless
+requests==2.23.0

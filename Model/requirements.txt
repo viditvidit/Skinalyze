@@ -3,4 +3,4 @@ opencv-python-headless
 ultralytics
 numpy
 Pillow
-requests==2.23.0
+requests

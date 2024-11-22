@@ -1,8 +1,6 @@
-streamlit==1.26.0
-opencv-python==4.8.0.74
-numpy==1.24.3
-Pillow==10.0.0
-requests==2.31.0
-ultralytics==8.0.153
-git+https://github.com/your-username/your-custom-package.git@main
--e .
+streamlit
+opencv-python-headless
+ultralytics
+numpy
+Pillow
+requests

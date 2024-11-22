@@ -4,3 +4,4 @@ ultralytics
 numpy
 Pillow
 requests
+git+https://github.com/viditvidit/Skinalyze.git@master#egg=Skinalyze&subdirectory=Model

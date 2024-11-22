@@ -1,9 +1,15 @@
-import numpy as np
-from ultralytics import YOLO
-import requests
 import os
 import sys
+import numpy as np
 from PIL import Image
+from ultralytics import YOLO
+import requests
+
+# Attempt to import OpenCV, but don't fail if it doesn't work
+try:
+    import cv2
+except ImportError:
+    cv2 = None
 
 urls = {
     "pigmentation": "https://raw.githubusercontent.com/viditvidit/Skinalyze/master/Model/pigmentation.pt",
@@ -39,10 +45,13 @@ except Exception as e:
     sys.exit(1)
 
 
-
 def preprocess_image(file):
     try:
         img = Image.open(file)
+        # Convert to RGB if not already
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
+        # Convert to numpy array
         img_rgb = np.array(img)
         return img, img_rgb
     except Exception as e:

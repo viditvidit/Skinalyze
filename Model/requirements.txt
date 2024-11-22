@@ -1,6 +1,5 @@
-pip==24.3.1
+opencv-python-headless
 streamlit
-opencv-python-headless # Ensures headless mode
 ultralytics
 numpy
 Pillow

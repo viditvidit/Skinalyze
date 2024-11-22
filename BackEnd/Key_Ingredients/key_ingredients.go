@@ -14,7 +14,7 @@ type KeyIngredients struct {
 
 // Get all key ingredients
 func GetKeyIngredients(c *gin.Context, db *sql.DB) {
-	rows, err := db.Query("SELECT Key_Ingredients_ID, Key_Ingredients FROM KEY_INGREDIENTS")
+	rows, err := db.Query("SELECT Key_Ingredients_ID, Key_Ingredients FROM Key_Ingredients")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -51,7 +51,7 @@ func CreateKeyIngredient(c *gin.Context, db *sql.DB) {
 		KeyIngredient:    keyingredient,
 	}
 	// Execute the SQL statement with parameters
-	result, err := db.Exec("INSERT INTO KEY_INGREDIENTS (Key_Ingredients_ID, Key_Ingredients) VALUES (?, ?);", newKeyIngredient.KeyIngredientsID, newKeyIngredient.KeyIngredient)
+	result, err := db.Exec("INSERT INTO Key_Ingredients (Key_Ingredients_ID, Key_Ingredients) VALUES (?, ?);", newKeyIngredient.KeyIngredientsID, newKeyIngredient.KeyIngredient)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -81,7 +81,7 @@ func UpdateKeyIngredient(c *gin.Context, db *sql.DB) {
 		KeyIngredient:    keyingredient,
 	}
 	// Execute the SQL statement with parameters
-	_, err = db.Exec("UPDATE KEY_INGREDIENTS SET Key_Ingredients = ? WHERE Key_Ingredients_ID = ?", updatedKeyIngredient.KeyIngredient, updatedKeyIngredient.KeyIngredientsID)
+	_, err = db.Exec("UPDATE Key_Ingredients SET Key_Ingredients = ? WHERE Key_Ingredients_ID = ?", updatedKeyIngredient.KeyIngredient, updatedKeyIngredient.KeyIngredientsID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -93,7 +93,7 @@ func UpdateKeyIngredient(c *gin.Context, db *sql.DB) {
 // Delete a key ingredient
 func DeleteKeyIngredient(c *gin.Context, db *sql.DB) {
 	id := c.Param("key_ingredients_id")
-	_, err := db.Exec("DELETE FROM KEY_INGREDIENTS WHERE Key_Ingredients_ID = ?", id)
+	_, err := db.Exec("DELETE FROM Key_Ingredients WHERE Key_Ingredients_ID = ?", id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

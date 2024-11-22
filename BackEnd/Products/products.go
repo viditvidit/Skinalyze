@@ -27,7 +27,7 @@ func GetProducts(c *gin.Context, db *sql.DB) {
 	rows, err := db.Query(`
 	SELECT Product_ID, Product_Name, All_Ingredients, Concern_ID, Skin_Type_ID,
 	Brand_ID, Product_Type_ID, Key_Ingredients_ID
-	FROM PRODUCTS`)
+	FROM Products`)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

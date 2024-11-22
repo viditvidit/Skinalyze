@@ -14,7 +14,7 @@ type SkinType struct {
 
 // Get all skin types
 func GetSkinTypes(c *gin.Context, db *sql.DB) {
-	rows, err := db.Query("SELECT Skin_Type_ID, Skin_Type FROM SKIN_TYPE")
+	rows, err := db.Query("SELECT Skin_Type_ID, Skin_Type FROM Skin_Type")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -49,7 +49,7 @@ func CreateSkinType(c *gin.Context, db *sql.DB) {
 		SkinType:   skinType,
 	}
 	// Execute the SQL statement with parameters
-	result, err := db.Exec("INSERT INTO SKIN_TYPE (Skin_Type_ID, Skin_Type) VALUES (?, ?);", newSkinType.SkinTypeID, newSkinType.SkinType)
+	result, err := db.Exec("INSERT INTO Skin_Type (Skin_Type_ID, Skin_Type) VALUES (?, ?);", newSkinType.SkinTypeID, newSkinType.SkinType)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -78,7 +78,7 @@ func UpdateSkinType(c *gin.Context, db *sql.DB) {
 		SkinType:   skinType,
 	}
 	// Execute the SQL statement with parameters
-	_, err = db.Exec("UPDATE SKIN_TYPE SET Skin_Type = ? WHERE Skin_Type_ID = ?", updatedSkinType.SkinType, updatedSkinType.SkinTypeID)
+	_, err = db.Exec("UPDATE Skin_Type SET Skin_Type = ? WHERE Skin_Type_ID = ?", updatedSkinType.SkinType, updatedSkinType.SkinTypeID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -90,7 +90,7 @@ func UpdateSkinType(c *gin.Context, db *sql.DB) {
 // Delete a skin type
 func DeleteSkinType(c *gin.Context, db *sql.DB) {
 	id := c.Param("skin_type_id")
-	_, err := db.Exec("DELETE FROM SKIN_TYPE WHERE Skin_Type_ID = ?", id)
+	_, err := db.Exec("DELETE FROM Skin_Type WHERE Skin_Type_ID = ?", id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

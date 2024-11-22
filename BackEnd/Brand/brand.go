@@ -14,7 +14,7 @@ type Brand struct {
 
 // Get all brands
 func GetBrands(c *gin.Context, db *sql.DB) {
-	rows, err := db.Query("SELECT Brand_ID, Brand FROM BRAND")
+	rows, err := db.Query("SELECT Brand_ID, Brand FROM Brand")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -49,7 +49,7 @@ func CreateBrand(c *gin.Context, db *sql.DB) {
 		Brand:   brand,
 	}
 	// Execute the SQL statement with parameters
-	result, err := db.Exec("INSERT INTO BRAND (Brand_ID, Brand) VALUES (?, ?);", newBrand.BrandID, newBrand.Brand)
+	result, err := db.Exec("INSERT INTO Brand (Brand_ID, Brand) VALUES (?, ?);", newBrand.BrandID, newBrand.Brand)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -79,7 +79,7 @@ func UpdateBrand(c *gin.Context, db *sql.DB) {
 		Brand:   brand,
 	}
 	// Execute the SQL statement with parameters
-	_, err = db.Exec("UPDATE BRAND SET Brand = ? WHERE Brand_ID = ?", updatedBrand.Brand, updatedBrand.BrandID)
+	_, err = db.Exec("UPDATE Brand SET Brand = ? WHERE Brand_ID = ?", updatedBrand.Brand, updatedBrand.BrandID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -91,7 +91,7 @@ func UpdateBrand(c *gin.Context, db *sql.DB) {
 // Delete a brand
 func DeleteBrand(c *gin.Context, db *sql.DB) {
 	id := c.Param("brand_id")
-	_, err := db.Exec("DELETE FROM BRAND WHERE Brand_ID = ?", id)
+	_, err := db.Exec("DELETE FROM Brand WHERE Brand_ID = ?", id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

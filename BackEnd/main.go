@@ -16,7 +16,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
+	"time"
 )
 
 // struct definition
@@ -24,54 +26,102 @@ type Config struct {
 	DBUser     string `json:"db_user"`
 	DBPassword string `json:"db_password"`
 	DBHost     string `json:"db_host"`
-	DBPort     string `json:"db_port"`
 	DBName     string `json:"db_name"`
+	DBPort     string `json:"db_port"`
 }
 
 func loadConfig() (Config, error) {
 	var config Config
 	file, err := ioutil.ReadFile("config.json")
 	if err != nil {
-		return config, err
+		return config, fmt.Errorf("reading config file: %v", err)
 	}
 	err = json.Unmarshal(file, &config)
+	if err != nil {
+		return config, fmt.Errorf("parsing config file: %v", err)
+	}
 	return config, err
 }
 
 func main() {
-	r := gin.Default()
-	r.Use(cors.Default()) // Default CORS config allows all origins, methods, and headers
+	// Set up logging
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	log.Printf("Starting application...")
 
-	// CORS middleware
-	r.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-		c.Next()
-	})
+	// Set up Gin
+	gin.SetMode(gin.ReleaseMode)
+	router := gin.Default()
+
+	// CORS configuration
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
+	router.Use(cors.New(corsConfig))
 
 	// Load configuration from JSON file
 	config, err := loadConfig()
 	if err != nil {
+		log.Printf("Config load error: %v", err)
 		log.Fatalf("Cannot load configuration: %v", err)
 	}
+	log.Printf("Config loaded successfully")
 
-	// Set up the Gin router
-	router := gin.Default()
+	// For App Engine, modify your DSN to use Unix socket
+	var dsn string
+	if os.Getenv("GAE_ENV") == "standard" {
+		// Running on App Engine
+		dsn = fmt.Sprintf("%s:%s@unix(/cloudsql/%s)/%s",
+			config.DBUser,
+			config.DBPassword,
+			config.DBHost, // This should be your instance connection name in config
+			config.DBName)
+	} else {
+		// Local development
+		dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+			config.DBUser,
+			config.DBPassword,
+			config.DBHost,
+			config.DBPort,
+			config.DBName)
+	}
 
-	// Create the Data Source Name (DSN)
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName)
-
-	// Open a connection to the database
+	// Configure database connection
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
+		log.Printf("Database connection error: %v", err)
 		log.Fatalf("Failed to connect to MySQL: %v", err)
 	}
 	defer db.Close()
+
+	// Configure connection pool
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(25)
+	db.SetConnMaxLifetime(5 * time.Minute)
+
+	// Test the connection
+	err = db.Ping()
+	if err != nil {
+		log.Printf("Database ping error: %v", err)
+		log.Fatalf("Failed to ping database: %v", err)
+	}
+	log.Printf("Database connected successfully!")
+
+	// Add basic health check endpoint
+	router.GET("/health", func(c *gin.Context) {
+		err := db.Ping()
+		if err != nil {
+			c.JSON(http.StatusServiceUnavailable, gin.H{
+				"status":  "error",
+				"message": "Database connection failed",
+			})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"status":  "ok",
+			"message": "Service is healthy",
+		})
+	})
 
 	// Brand CRUD routes
 	router.GET("/brand", func(c *gin.Context) {
@@ -149,14 +199,12 @@ func main() {
 	})
 
 	router.GET("/products/select/:concern_id/:skin_type_id", func(c *gin.Context) {
-		// Get concern ID
 		concernIDStr := c.Param("concern_id")
 		concernID, err := strconv.Atoi(concernIDStr)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid concern_id"})
 			return
 		}
-		// Get skin type ID
 		skinTypeIDStr := c.Param("skin_type_id")
 		skinTypeID, err := strconv.Atoi(skinTypeIDStr)
 		if err != nil {
@@ -167,7 +215,6 @@ func main() {
 	})
 
 	router.GET("/products/selectspec/:concern_id/:skin_type_id/:product_type_id", func(c *gin.Context) {
-		// Get concern ID
 		concernIDStr := c.Param("concern_id")
 		concernID, err := strconv.Atoi(concernIDStr)
 		if err != nil {
@@ -175,7 +222,6 @@ func main() {
 			return
 		}
 
-		// Get skin type ID
 		skinTypeIDStr := c.Param("skin_type_id")
 		skinTypeID, err := strconv.Atoi(skinTypeIDStr)
 		if err != nil {
@@ -183,7 +229,6 @@ func main() {
 			return
 		}
 
-		// Get product type ID
 		productTypeIDStr := c.Param("product_type_id")
 		productTypeID, err := strconv.Atoi(productTypeIDStr)
 		if err != nil {
@@ -203,5 +248,14 @@ func main() {
 	router.DELETE("/products/delete/:products_id", func(c *gin.Context) {
 		products.DeleteProduct(c, db)
 	})
-	router.Run(":8080")
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("Starting server on port %s", port)
+	if err := router.Run(":" + port); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 }

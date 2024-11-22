@@ -14,7 +14,7 @@ type ProductType struct {
 
 // Get all product types
 func GetProductTypes(c *gin.Context, db *sql.DB) {
-	rows, err := db.Query("SELECT Product_Type_ID, Product_Type FROM PRODUCT_TYPE")
+	rows, err := db.Query("SELECT Product_Type_ID, Product_Type FROM Product_Type")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -49,7 +49,7 @@ func CreateProductType(c *gin.Context, db *sql.DB) {
 		ProductType:   productType,
 	}
 	// Execute the SQL statement with parameters
-	result, err := db.Exec("INSERT INTO PRODUCT_TYPE (Product_Type_ID, Product_Type) VALUES (?, ?);", newProductType.ProductTypeID, newProductType.ProductType)
+	result, err := db.Exec("INSERT INTO Product_Type (Product_Type_ID, Product_Type) VALUES (?, ?);", newProductType.ProductTypeID, newProductType.ProductType)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -78,7 +78,7 @@ func UpdateProductType(c *gin.Context, db *sql.DB) {
 		ProductType:   productType,
 	}
 	// Execute the SQL statement with parameters
-	_, err = db.Exec("UPDATE PRODUCT_TYPE SET Product_Type = ? WHERE Product_Type_ID = ?", updatedProductType.ProductType, updatedProductType.ProductTypeID)
+	_, err = db.Exec("UPDATE Product_Type SET Product_Type = ? WHERE Product_Type_ID = ?", updatedProductType.ProductType, updatedProductType.ProductTypeID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -90,7 +90,7 @@ func UpdateProductType(c *gin.Context, db *sql.DB) {
 // Delete a product type
 func DeleteProductType(c *gin.Context, db *sql.DB) {
 	id := c.Param("product_type_id")
-	_, err := db.Exec("DELETE FROM PRODUCT_TYPE WHERE Product_Type_ID = ?", id)
+	_, err := db.Exec("DELETE FROM Product_Type WHERE Product_Type_ID = ?", id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

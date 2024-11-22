@@ -14,7 +14,7 @@ type Concern struct {
 
 // Get all concerns
 func GetConcerns(c *gin.Context, db *sql.DB) {
-	rows, err := db.Query("SELECT Concern_ID, Concern FROM CONCERN")
+	rows, err := db.Query("SELECT Concern_ID, Concern FROM Concern")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -49,7 +49,7 @@ func CreateConcern(c *gin.Context, db *sql.DB) {
 		Concern:   concern,
 	}
 	// Execute the SQL statement with parameters
-	result, err := db.Exec("INSERT INTO CONCERN (Concern_ID, Concern) VALUES (?, ?);", newConcern.ConcernID, newConcern.Concern)
+	result, err := db.Exec("INSERT INTO Concern (Concern_ID, Concern) VALUES (?, ?);", newConcern.ConcernID, newConcern.Concern)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -78,7 +78,7 @@ func UpdateConcern(c *gin.Context, db *sql.DB) {
 		Concern:   concern,
 	}
 	// Execute the SQL statement with parameters
-	_, err = db.Exec("UPDATE CONCERN SET Concern = ? WHERE Concern_ID = ?", updatedConcern.Concern, updatedConcern.ConcernID)
+	_, err = db.Exec("UPDATE Concern SET Concern = ? WHERE Concern_ID = ?", updatedConcern.Concern, updatedConcern.ConcernID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -90,7 +90,7 @@ func UpdateConcern(c *gin.Context, db *sql.DB) {
 // Delete a concern
 func DeleteConcern(c *gin.Context, db *sql.DB) {
 	id := c.Param("concern_id")
-	_, err := db.Exec("DELETE FROM CONCERN WHERE Concern_ID = ?", id)
+	_, err := db.Exec("DELETE FROM Concern WHERE Concern_ID = ?", id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -5,45 +5,21 @@ from PIL import Image
 from ultralytics import YOLO
 import requests
 
-# Attempt to import OpenCV, but don't fail if it doesn't work
-try:
-    import cv2
-except ImportError:
-    cv2 = None
-
-urls = {
-    "pigmentation": "https://raw.githubusercontent.com/viditvidit/Skinalyze/master/Model/pigmentation.pt",
-    "darkspot": "https://raw.githubusercontent.com/viditvidit/Skinalyze/master/Model/darkspot.pt",
-    "acne": "https://raw.githubusercontent.com/viditvidit/Skinalyze/master/Model/acne.pt",
+# Assume models are in a 'models' directory in the same repository
+model_paths = {
+    "pigmentation": "./models/pigmentation.pt",
+    "darkspot": "./models/darkspot.pt",
+    "acne": "./models/acne.pt",
 }
 
-# Ensure models directory exists
-os.makedirs('models', exist_ok=True)
-
-# Download models
-for name, url in urls.items():
-    local_path = f"./models/{name}.pt"
-    if not os.path.exists(local_path):  # Download only if not already downloaded
-        print(f"Downloading {name}.pt...")
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            with open(local_path, "wb") as f:
-                f.write(response.content)
-            print(f"{name}.pt downloaded!")
-        except Exception as e:
-            print(f"Failed to download {name}.pt: {e}")
-            sys.exit(1)
-
-# Load YOLO models with full path
+# Load YOLO models from local paths
 try:
-    pigmentation_model = YOLO('./models/pigmentation.pt')
-    darkspot_model = YOLO('./models/darkspot.pt')
-    acne_model = YOLO('./models/acne.pt')
+    pigmentation_model = YOLO(model_paths["pigmentation"])
+    darkspot_model = YOLO(model_paths["darkspot"])
+    acne_model = YOLO(model_paths["acne"])
 except Exception as e:
     print(f"Failed to load models: {e}")
     sys.exit(1)
-
 
 def preprocess_image(file):
     try:

@@ -258,4 +258,48 @@ func main() {
 	if err := router.Run(":" + port); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
+	// Enhanced logging for database connection
+	log.Printf("Environment: %s", os.Getenv("GAE_ENV"))
+	log.Printf("Database host: %s", config.DBHost)
+
+	// Modify your products endpoint with logging
+	router.GET("/products/select/:concern_id/:skin_type_id", func(c *gin.Context) {
+		log.Printf("Received request for products with concern_id: %s, skin_type_id: %s",
+			c.Param("concern_id"), c.Param("skin_type_id"))
+
+		concernIDStr := c.Param("concern_id")
+		concernID, err := strconv.Atoi(concernIDStr)
+		if err != nil {
+			log.Printf("Error converting concern_id: %v", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid concern_id"})
+			return
+		}
+
+		skinTypeIDStr := c.Param("skin_type_id")
+		skinTypeID, err := strconv.Atoi(skinTypeIDStr)
+		if err != nil {
+			log.Printf("Error converting skin_type_id: %v", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid skin_type_id"})
+			return
+		}
+
+		log.Printf("Calling GetSelectProducts with concernID: %d, skinTypeID: %d",
+			concernID, skinTypeID)
+		products.GetSelectProducts(c, db, concernID, skinTypeID)
+	})
+
+	// Add middleware to log all requests
+	router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
+			param.ClientIP,
+			param.TimeStamp.Format(time.RFC1123),
+			param.Method,
+			param.Path,
+			param.Request.Proto,
+			param.StatusCode,
+			param.Latency,
+			param.Request.UserAgent(),
+			param.ErrorMessage,
+		)
+	}))
 }

@@ -58,11 +58,11 @@ func GetSelectProducts(c *gin.Context, db *sql.DB, concernID, skinTypeID int) {
         c.Concern,
         k.Key_Ingredients,
         s.Skin_Type
-    FROM PRODUCTS p
-    INNER JOIN brand b ON p.Brand_ID = b.Brand_ID
-    INNER JOIN concern c ON p.Concern_ID = c.Concern_ID
-    INNER JOIN key_ingredients k ON p.Key_Ingredients_ID = k.Key_Ingredients_ID
-    INNER JOIN skin_type s ON p.Skin_Type_ID = s.Skin_Type_ID
+    FROM Products p
+    INNER JOIN Brand b ON p.Brand_ID = b.Brand_ID
+    INNER JOIN Concern c ON p.Concern_ID = c.Concern_ID
+    INNER JOIN Key_Ingredients k ON p.Key_Ingredients_ID = k.Key_Ingredients_ID
+    INNER JOIN Skin_Type s ON p.Skin_Type_ID = s.Skin_Type_ID
     WHERE p.Concern_ID = ? 
     AND p.Skin_Type_ID = ?
     ORDER BY p.PRODUCT_TYPE_ID
@@ -103,11 +103,11 @@ func GetSelectProductsByType(c *gin.Context, db *sql.DB, concernID, skinTypeID, 
         c.Concern,
         k.Key_Ingredients,
         s.Skin_Type
-    FROM PRODUCTS p
-    INNER JOIN brand b ON p.Brand_ID = b.Brand_ID
-    INNER JOIN concern c ON p.Concern_ID = c.Concern_ID
-    INNER JOIN key_ingredients k ON p.Key_Ingredients_ID = k.Key_Ingredients_ID
-    INNER JOIN skin_type s ON p.Skin_Type_ID = s.Skin_Type_ID
+    FROM Products p
+    INNER JOIN Brand b ON p.Brand_ID = b.Brand_ID
+    INNER JOIN Concern c ON p.Concern_ID = c.Concern_ID
+    INNER JOIN Key_Ingredients k ON p.Key_Ingredients_ID = k.Key_Ingredients_ID
+    INNER JOIN Skin_Type s ON p.Skin_Type_ID = s.Skin_Type_ID
     WHERE p.Concern_ID = ? 
     AND p.Skin_Type_ID = ?
     AND p.Product_Type_ID = ?
@@ -193,7 +193,7 @@ func CreateProduct(c *gin.Context, db *sql.DB) {
 	}
 	// Execute the SQL statement with parameters
 	result, err := db.Exec(`
-    INSERT INTO PRODUCTS (Product_ID, Product_Name, All_Ingredients, Concern_ID, Skin_Type_ID, Brand_ID, Product_Type_ID, Key_Ingredients_ID)
+    INSERT INTO Products (Product_ID, Product_Name, All_Ingredients, Concern_ID, Skin_Type_ID, Brand_ID, Product_Type_ID, Key_Ingredients_ID)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
 		newProduct.ProductID,
 		newProduct.ProductName,

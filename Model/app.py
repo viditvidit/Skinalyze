@@ -2,7 +2,6 @@ import streamlit as st
 from model import analyze_skin, get_recommended_products, get_recommended_products_by_type
 from PIL import Image
 
-
 def main():
     st.logo("https://github.com/viditvidit/Skinalyze/blob/master/Model/Logow.png", size='large')
     st.subheader("Select Image Source")

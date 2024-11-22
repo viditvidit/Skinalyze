@@ -3,6 +3,30 @@ import numpy as np
 from ultralytics import YOLO
 import requests
 import os
+import sys
+
+# Modify system path to ensure OpenCV can find libraries
+os.environ['OPENCV_IO_MAX_IMAGE_PIXELS'] = str(2 ** 30)
+
+# Attempt to handle OpenCV import issues
+try:
+    import cv2
+except ImportError:
+    print("OpenCV import failed. Trying alternative approach.")
+    import sys
+    import subprocess
+
+
+    def install(package):
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+
+    try:
+        install('opencv-python-headless')
+        import cv2
+    except Exception as e:
+        print(f"Could not import OpenCV: {e}")
+        sys.exit(1)
 
 urls = {
     "pigmentation": "https://raw.githubusercontent.com/viditvidit/Skinalyze/master/Model/pigmentation.pt",
@@ -10,25 +34,46 @@ urls = {
     "acne": "https://raw.githubusercontent.com/viditvidit/Skinalyze/master/Model/acne.pt",
 }
 
+# Ensure models directory exists
+os.makedirs('models', exist_ok=True)
+
 # Download models
 for name, url in urls.items():
-    local_path = f"./{name}.pt"
+    local_path = f"./models/{name}.pt"
     if not os.path.exists(local_path):  # Download only if not already downloaded
         print(f"Downloading {name}.pt...")
-        response = requests.get(url)
-        with open(local_path, "wb") as f:
-            f.write(response.content)
-        print(f"{name}.pt downloaded!")
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            with open(local_path, "wb") as f:
+                f.write(response.content)
+            print(f"{name}.pt downloaded!")
+        except Exception as e:
+            print(f"Failed to download {name}.pt: {e}")
+            sys.exit(1)
 
-# Load YOLO models
-pigmentation_model = YOLO('./pigmentation.pt')
-darkspot_model = YOLO('./darkspot.pt')
-acne_model = YOLO('./acne.pt')
+# Load YOLO models with full path
+try:
+    pigmentation_model = YOLO('./models/pigmentation.pt')
+    darkspot_model = YOLO('./models/darkspot.pt')
+    acne_model = YOLO('./models/acne.pt')
+except Exception as e:
+    print(f"Failed to load models: {e}")
+    sys.exit(1)
+
 
 def preprocess_image(file):
-    img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
-    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    return img, img_rgb
+    # Read image with more robust error handling
+    try:
+        img_array = np.frombuffer(file.read(), np.uint8)
+        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+        if img is None:
+            raise ValueError("Failed to decode image")
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        return img, img_rgb
+    except Exception as e:
+        print(f"Image preprocessing error: {e}")
+        raise
 
 def detect_objects(model, image):
     results = model(image)

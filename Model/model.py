@@ -48,15 +48,12 @@ def analyze_skin(file):
         detected_conditions.append("Dark Spots")
     if len(acne_boxes) > 0:
         detected_conditions.append("Acne")
-
     return detected_conditions
-
 
 def get_recommended_products(detected_conditions, skin_type_id):
     API_BASE_URL = "https://clear-vision-438804-u6.el.r.appspot.com/"
     PRODUCTS_BY_CONCERN_ENDPOINT = "/products/select"
     recommended_products = []
-
     for condition in detected_conditions:
         # Map condition to concern ID
         concern_id = None
@@ -66,7 +63,6 @@ def get_recommended_products(detected_conditions, skin_type_id):
             concern_id = 2
         else:
             continue
-
         # Fetch products based on both concern ID and skin type
         url = f"{API_BASE_URL}{PRODUCTS_BY_CONCERN_ENDPOINT}/{concern_id}/{skin_type_id}"
         try:
@@ -96,7 +92,6 @@ def get_recommended_products_by_type(detected_conditions, skin_type_id, product_
             concern_id = 2
         else:
             continue
-
         # Fetch products based on concern ID, skin type, and product type
         url = f"{API_BASE_URL}{PRODUCTS_BY_CONCERN_ENDPOINT}/{concern_id}/{skin_type_id}/{product_type_id}"
         try:

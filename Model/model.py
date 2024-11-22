@@ -1,19 +1,19 @@
+import cv2
+import numpy as np
 from ultralytics import YOLO
 import requests
 import os
-from PIL import Image
 
-# URLs for YOLO model files
 urls = {
     "pigmentation": "https://raw.githubusercontent.com/viditvidit/Skinalyze/master/Model/pigmentation.pt",
     "darkspot": "https://raw.githubusercontent.com/viditvidit/Skinalyze/master/Model/darkspot.pt",
     "acne": "https://raw.githubusercontent.com/viditvidit/Skinalyze/master/Model/acne.pt",
 }
 
-# Download models if not already present
+# Download models
 for name, url in urls.items():
     local_path = f"./{name}.pt"
-    if not os.path.exists(local_path):
+    if not os.path.exists(local_path):  # Download only if not already downloaded
         print(f"Downloading {name}.pt...")
         response = requests.get(url)
         with open(local_path, "wb") as f:
@@ -25,15 +25,10 @@ pigmentation_model = YOLO('./pigmentation.pt')
 darkspot_model = YOLO('./darkspot.pt')
 acne_model = YOLO('./acne.pt')
 
-# Replace `cv2` preprocessing
 def preprocess_image(file):
-    # Decode the image from the uploaded file using Pillow
-    img = Image.open(file).convert("RGB")  # Ensure RGB format
-    # Optional: Choose a YOLO model for preprocessing (e.g., pigmentation_model)
-    yolo_results = pigmentation_model(img)  # Run detection on the image
-    # Annotate the image with YOLO results
-    annotated_img = yolo_results[0].plot()  # Draw bounding boxes and labels
-    return img, annotated_img
+    img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
+    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    return img, img_rgb
 
 def detect_objects(model, image):
     results = model(image)

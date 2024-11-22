@@ -1,6 +1,8 @@
 streamlit
-opencv-python-headless
+opencv-python-headless  # Ensures headless mode
 ultralytics
 numpy
 Pillow
 requests
+libgl1-mesa-glx
+libglib2.0-0

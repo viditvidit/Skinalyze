@@ -4,7 +4,7 @@ from PIL import Image
 
 import os
 
-port = int(os.environ.get("PORT", 8080))
+port = int(os.environ.get("PORT", 8501))
 os.system(f"streamlit config set server.port {port}")
 os.system("streamlit config set server.address 0.0.0.0")
 

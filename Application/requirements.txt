@@ -1,6 +1,11 @@
+# Core dependencies
 streamlit
-opencv-python-headless
-ultralytics
 numpy
 Pillow
 requests
+ultralytics
+
+# OpenCV with headless version and dependencies
+opencv-python-headless<=4.8.1.78
+torch
+torchvision

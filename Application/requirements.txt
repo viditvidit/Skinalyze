@@ -4,4 +4,3 @@ Pillow
 requests
 streamlit
 torch
-torchvision

@@ -1,11 +1,13 @@
-# Core dependencies
-streamlit
-numpy
-Pillow
-requests
-ultralytics
+# Core ML dependencies
+torch>=2.0.0,<2.1.0
+torchvision>=0.15.0,<0.16.0
+numpy>=1.23.5,<1.24.0
+ultralytics>=8.0.0,<9.0.0
 
-# OpenCV with headless version and dependencies
-opencv-python-headless<=4.8.1.78
-torch
-torchvision
+# Image processing
+Pillow>=9.5.0,<10.0.0
+opencv-python-headless==4.8.1.78
+
+# Web dependencies
+streamlit>=1.28.0,<2.0.0
+requests>=2.31.0,<3.0.0

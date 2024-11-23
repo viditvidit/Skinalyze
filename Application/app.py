@@ -3,7 +3,7 @@ from model import analyze_skin, get_recommended_products, get_recommended_produc
 from PIL import Image
 
 def main():
-    image = "/Users/vidit/Documents/College/Skinalyze/Model/Logow.png"
+    image = "Logow.png"
     col1, col2, col3 = st.columns(3)
     with col2:
         st.image(image, width=400)

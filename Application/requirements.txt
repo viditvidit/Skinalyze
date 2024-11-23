@@ -1,14 +1,7 @@
-# Core Python dependencies
 setuptools>=65.5.1
 wheel>=0.38.4
-
-# Core scientific computing and ML dependencies
 numpy>=1.23.5
 ultralytics>=8.0.0,<9.0.0
-
-# Image processing
 Pillow>=9.0.0
-
-# Web dependencies
 requests>=2.31.0
 streamlit>=1.28.0,<1.30.0

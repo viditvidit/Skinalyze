@@ -3,7 +3,9 @@ from model import analyze_skin, get_recommended_products, get_recommended_produc
 from PIL import Image
 
 def main():
-    st.logo("https://github.com/viditvidit/Skinalyze/blob/master/Model/Logow.png", size='large')
+    image = "/Users/vidit/Documents/College/Skinalyze/Model/Logow.png"
+    #st.logo(image, size='large')
+    st.title("Skinalyze")
     st.subheader("Select Image Source")
 
     # Create columns for buttons

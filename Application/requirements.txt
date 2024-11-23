@@ -1,6 +1,0 @@
-numpy
-ultralytics
-Pillow
-requests
-streamlit
-torch

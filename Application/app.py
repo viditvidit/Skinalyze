@@ -2,16 +2,19 @@ import streamlit as st
 from model import analyze_skin, get_recommended_products, get_recommended_products_by_type
 from PIL import Image
 
+import os
+
+port = int(os.environ.get("PORT", 8080))
+os.system(f"streamlit config set server.port {port}")
+os.system("streamlit config set server.address 0.0.0.0")
+
 def main():
     image = "Logow.png"
-    col1, col2, col3 = st.columns(3)
-    with col2:
-        st.image(image, width=400)
+    st.logo(image,size="large")
     st.subheader("Select Image Source")
 
-    # Create columns for buttons
+    #button columns
     col1, col2 = st.columns(2)
-
     with col1:
         upload_button = st.button("Upload Image", use_container_width=True)
 

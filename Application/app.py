@@ -4,7 +4,7 @@ from PIL import Image
 
 def main():
     image = "/Users/vidit/Documents/College/Skinalyze/Model/Logow.png"
-    #st.logo(image, size='large')
+    st.logo(image, size='large')
     st.title("Skinalyze")
     st.subheader("Select Image Source")
 

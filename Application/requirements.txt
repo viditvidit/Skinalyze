@@ -1,6 +1,6 @@
 # Core ML dependencies
-setuptools>=65.5.1,<67.0.0
-wheel>=0.38.4,<0.41.0
+setuptools>=65.5.1
+wheel>=0.38.4
 numpy==1.23.5
 torch==2.0.1
 torchvision==0.15.2
@@ -14,3 +14,6 @@ opencv-python-headless==4.8.1.78
 streamlit>=1.28.0,<1.30.0
 requests>=2.31.0
 typing-extensions>=4.6.0
+
+# Fix for distutils issue
+distlib

@@ -1,7 +1,5 @@
-streamlit
-opencv-python-headless
-opencv-python
-ultralytics
-numpy
-Pillow
-requests
+torch==2.0.1         # PyTorch version (adjust if you use GPU or specific version)
+torchvision==0.15.2  # Optional if using image transformations with PyTorch
+streamlit==1.25.0    # Latest version of Streamlit
+Pillow==10.0.0       # Required for image handling (e.g., st.image())
+numpy==1.24.4        # For numerical operations (optional if used in processing)

@@ -1,7 +1,7 @@
 # Core ML dependencies
 torch
 torchvision
-numpy>=1.23.5,<1.24.0
+numpy
 ultralytics>=8.0.0,<9.0.0
 
 # Image processing

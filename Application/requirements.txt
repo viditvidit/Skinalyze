@@ -1,8 +1,4 @@
-setuptools
-torch
-distlib
-torchvision
-streamlit==1.25.0    # Latest version of Streamlit
-Pillow==10.0.0       # Required for image handling (e.g., st.image())
-numpy==1.24.4        # For numerical operations (optional if used in processing)
+streamlit
+Pillow
+numpy
 opencv-python-headless

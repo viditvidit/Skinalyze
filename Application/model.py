@@ -30,7 +30,6 @@ def analyze_skin(file):
         detected_conditions.append("Dark Spots")
     if len(acne_boxes) > 0:
         detected_conditions.append("Acne")
-
     return detected_conditions
 
 

@@ -11,6 +11,7 @@ type Product struct {
 	ProductID        int    `json:"product_id"`
 	ProductName      string `json:"product_name"`
 	AllIngredients   string `json:"all_ingredients"`
+	ProductURL       string `json:"product_url"`
 	ConcernID        int    `json:"concern_id"`
 	Concern          string `json:"concern"`
 	SkinTypeID       int    `json:"skin_type_id"`
@@ -20,14 +21,12 @@ type Product struct {
 	ProductTypeID    int    `json:"product_type_id"`
 	KeyIngredientsID int    `json:"key_ingredients_id"`
 	KeyIngredients   string `json:"key_ingredients"`
+	ImageURL         string `json:"image_url"`
 }
 
 // Get all products
 func GetProducts(c *gin.Context, db *sql.DB) {
-	rows, err := db.Query(`
-	SELECT Product_ID, Product_Name, All_Ingredients, Concern_ID, Skin_Type_ID,
-	Brand_ID, Product_Type_ID, Key_Ingredients_ID
-	FROM Products`)
+	rows, err := db.Query(`SELECT * FROM Products`)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -37,8 +36,8 @@ func GetProducts(c *gin.Context, db *sql.DB) {
 	var products []Product
 	for rows.Next() {
 		var product Product
-		if err := rows.Scan(&product.ProductID, &product.ProductName, &product.AllIngredients, &product.ConcernID,
-			&product.SkinTypeID, &product.BrandID, &product.ProductTypeID, &product.KeyIngredientsID); err != nil {
+		if err := rows.Scan(&product.ProductID, &product.ProductName, &product.AllIngredients, &product.ProductURL, &product.ConcernID,
+			&product.SkinTypeID, &product.BrandID, &product.ProductTypeID, &product.KeyIngredientsID, &product.ImageURL); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -54,10 +53,12 @@ func GetSelectProducts(c *gin.Context, db *sql.DB, concernID, skinTypeID int) {
     SELECT 
         p.Product_Name,
         p.All_Ingredients,
+        p.Product_URL,
         b.Brand,
         c.Concern,
         k.Key_Ingredients,
-        s.Skin_Type
+        s.Skin_Type,
+        p.Image_URL
     FROM Products p
     INNER JOIN Brand b ON p.Brand_ID = b.Brand_ID
     INNER JOIN Concern c ON p.Concern_ID = c.Concern_ID
@@ -80,10 +81,12 @@ func GetSelectProducts(c *gin.Context, db *sql.DB, concernID, skinTypeID int) {
 		if err := rows.Scan(
 			&product.ProductName,
 			&product.AllIngredients,
+			&product.ProductURL,
 			&product.Brand,
 			&product.Concern,
 			&product.KeyIngredients,
 			&product.SkinType,
+			&product.ImageURL,
 		); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -99,10 +102,12 @@ func GetSelectProductsByType(c *gin.Context, db *sql.DB, concernID, skinTypeID, 
     SELECT 
         p.Product_Name,
         p.All_Ingredients,
+        p.Product_URL,
         b.Brand,
         c.Concern,
         k.Key_Ingredients,
-        s.Skin_Type
+        s.Skin_Type,
+        p.Image_URL
     FROM Products p
     INNER JOIN Brand b ON p.Brand_ID = b.Brand_ID
     INNER JOIN Concern c ON p.Concern_ID = c.Concern_ID
@@ -125,10 +130,12 @@ func GetSelectProductsByType(c *gin.Context, db *sql.DB, concernID, skinTypeID, 
 		if err := rows.Scan(
 			&product.ProductName,
 			&product.AllIngredients,
+			&product.ProductURL,
 			&product.Brand,
 			&product.Concern,
 			&product.KeyIngredients,
 			&product.SkinType,
+			&product.ImageURL,
 		); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
